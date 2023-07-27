@@ -5,8 +5,8 @@ import {
   deleteUserById,
 } from "@/helperfunctions/dbmethods";
 
-// find user by its ID
-export async function GET(req, res) {
+// find user by Id
+export async function GET(req) {
   try {
     const url = await req.url;
     const id = url.split("/users/")[1];
