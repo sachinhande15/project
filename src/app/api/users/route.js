@@ -2,25 +2,23 @@ import { NextResponse } from "next/server";
 import User from "@/model/user";
 import connectDB from "@/dbconnet/connection";
 import bcryptjs from "bcryptjs";
-const uri =
-  "mongodb+srv://sachin:user@cluster0.ss7zreb.mongodb.net/vechile-parking-databse?retryWrites=true&w=majority";
-
 /*
-This method is used to save users data into the database
+This method is used to fetch users data from the database
 */
 export async function GET(request, response) {
   try {
     const url = await request.url;
+
     if (url.match(/\/users$/i)) {
       // Connection to database
-      connectDB(uri);
+      connectDB(process.env.MONGO_URI);
       //Retrive all users from database
       const users = await User.find();
       return NextResponse.json({ users }, { status: 200 });
     } else {
       const searchParams = request.nextUrl.searchParams.get("vechileNumber");
       if (searchParams) {
-        connectDB(uri);
+        connectDB(process.env.MONGO_URI);
         const user = await User.findOne({ vechileNumber: searchParams });
         console.log(user);
         return NextResponse.json({ message: "user found" }, { status: 200 });
@@ -35,12 +33,11 @@ This method is used to save users data into the database
 */
 export async function POST(req, res) {
   try {
-    connectDB(uri);
+    connectDB(process.env.MONGO_URI);
     const reqbody = await req.json();
     const { email, username, password, mobile, company } = reqbody;
     let userFound = await User.findOne({ email });
     if (userFound) {
-      console.log("already present");
       return NextResponse.json(
         {
           message:
@@ -49,18 +46,20 @@ export async function POST(req, res) {
         { status: 200 }
       );
     }
+    const salt = await bcryptjs.genSalt(5);
+    const hasspassword = await bcryptjs.hash(password, salt);
 
     const newuser = new User({
       email,
       username,
-      password: encryptPassword(password),
+      password: hasspassword,
       mobile,
       company,
     });
     const saveduser = await newuser.save();
     console.log(saveduser);
     return NextResponse.json(
-      { message: "user creaetd sucessfully" },
+      { message: "Your have been registred sucessfully." },
       { status: 201 }
     );
   } catch (error) {
@@ -70,7 +69,7 @@ export async function POST(req, res) {
 
 /*
 This method is used to encrypt the user password while saving into database
-*/
+
 const encryptPassword = async (password) => {
   try {
     const salt = await bcryptjs.genSalt(5);
@@ -80,3 +79,4 @@ const encryptPassword = async (password) => {
     console.log(error);
   }
 };
+*/

@@ -4,7 +4,11 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useRouter } from "next/navigation";
 export default function SignUp() {
+  const router = useRouter();
   const [user, setuser] = useState({
     email: "",
     username: "",
@@ -18,12 +22,17 @@ export default function SignUp() {
   const handelSubmit = async (e) => {
     try {
       e.preventDefault();
-      // const body = JSON.stringify(user);
       const res = await axios.post("/api/users", user);
-      const data = await res.data;
-      console.log(data);
+      console.log(res);
+      if (res.status == 201) {
+        const data = await res.data;
+        toast.success(data.message, {
+          position: toast.POSITION.TOP_CENTER,
+        });
+        // return router.push("/login");
+      }
     } catch (error) {
-      console.log(error);
+      toast.error(error);
     }
   };
   return (
@@ -158,6 +167,7 @@ export default function SignUp() {
           </div>
         </div>
       </div>
+      <ToastContainer></ToastContainer>
     </section>
   );
 }

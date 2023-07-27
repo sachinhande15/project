@@ -1,12 +1,9 @@
 import User from "@/model/user";
 import connectDB from "@/dbconnet/connection";
-const uri =
-  "mongodb+srv://sachin:user@cluster0.ss7zreb.mongodb.net/vechile-parking-databse?retryWrites=true&w=majority";
-
 // databse connection
 export async function getUserById(id) {
   try {
-    connectDB(uri);
+    connectDB(process.env.MONGO_URI);
     const userFound = await User.findById({ _id: id });
     if (userFound) {
       console.log("user found sucessfully");
@@ -17,22 +14,9 @@ export async function getUserById(id) {
     console.log(error);
   }
 }
-// export default async function deleteUserById(id) {
-//     try {
-//         connectDB(uri);
-//     const userFound = await User.findById({ _id: id });
-//     if (userFound) {
-//       await User.deleteOne(userFound);
-//       console.log("user deleted sucessfully");
-//     }
-
-//     } catch (error) {
-//         console.log(error)
-//     }
-// }
 export async function deleteUserById(id) {
   try {
-    connectDB(uri);
+    connectDB(process.env.MONGO_URI);
     const userFound = await User.findById({ _id: id });
     if (userFound) {
       await User.deleteOne(userFound);
@@ -44,7 +28,7 @@ export async function deleteUserById(id) {
 }
 export async function updateUserById(id, userData) {
   try {
-    connectDB(uri);
+    connectDB(process.env.MONGO_URI);
     const userFound = await User.findById({ _id: id });
     const { name, company, mobileNumber, vechileNumber } = userData;
     if (userFound) {

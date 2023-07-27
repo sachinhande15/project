@@ -5,7 +5,6 @@ import {
   deleteUserById,
 } from "@/helperfunctions/dbmethods";
 
-// find user by Id
 export async function GET(req) {
   try {
     const url = await req.url;
@@ -16,9 +15,6 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-
-// find user by ID and delete
-
 export async function DELETE(req, res) {
   try {
     const url = await req.url;
