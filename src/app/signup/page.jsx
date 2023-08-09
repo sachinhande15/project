@@ -1,173 +1,185 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { useFormik } from "formik";
+import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import axios from "axios";
 import { useRouter } from "next/navigation";
-export default function SignUp() {
+export default async function Form() {
   const router = useRouter();
-  const [user, setuser] = useState({
+  const initialValues = {
+    name: "",
     email: "",
-    username: "",
     password: "",
-    mobile: "",
-    company: "",
-  });
-  const handleChange = (e) => {
-    setuser({ ...user, [e.target.name]: e.target.value });
   };
-  const handelSubmit = async (e) => {
+
+  /*
+   * User registration
+   */
+  const onSubmit = async (values) => {
     try {
-      e.preventDefault();
-      const res = await axios.post("/api/users", user);
-      console.log(res);
-      if (res.status == 201) {
-        const data = await res.data;
+      const userData = JSON.stringify(values);
+      let response = await axios.post("/api/user/registration", userData, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.status == 201) {
+        let data = await response.data;
+        console.log(data);
         toast.success(data.message, {
           position: toast.POSITION.TOP_CENTER,
         });
-        // return router.push("/login");
+        setInterval(() => {
+          router.push("/login");
+        }, 3000);
       }
     } catch (error) {
-      toast.error(error);
+      toast.error(error, {
+        position: toast.POSITION.TOP_RIGHT,
+      });
     }
   };
+  /*
+   * Validate all fields
+   */
+  const validate = (values) => {
+    let errors = {};
+    if (!values.name) {
+      errors.name = "This Field is required";
+    } else if (!values.email) {
+      errors.email = "This field is required";
+    } else if (
+      !/^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/.test(
+        values.email
+      )
+    ) {
+      errors.email = "Email address is not valid";
+    } else if (!values.password) {
+      errors.password = "This Field is required";
+    }
+    return errors;
+  };
+  const { handleChange, handleSubmit, values, errors, handleBlur, touched } =
+    useFormik({
+      initialValues,
+      onSubmit,
+      validate,
+    });
+
   return (
-    <section className="bg-gray-50 dark:bg-gray-900">
-      <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-        <Link
-          href="#"
-          className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
-        >
-          <Image
-            className="mr-2"
-            width={20}
-            height={20}
-            src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-            alt="logo"
-          />
-          Flowbite
-        </Link>
-        <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
-          <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-            <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
-              Sign up
-            </h1>
-            <form className="space-y-4 md:space-y-6" action="#">
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Email
-                </label>
-                <input
-                  type="email"
-                  name="email"
-                  id="email"
-                  autoComplete="off"
-                  value={user.email}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="name@company.com"
-                  required="required"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="username"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Username
-                </label>
-                <input
-                  type="text"
-                  name="username"
-                  id="username"
-                  autoComplete="off"
-                  value={user.username}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="enter username"
-                  required=""
-                  maxLength={20}
-                  minLength={5}
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Mobile Number
-                </label>
-                <input
-                  type="tel"
-                  name="mobile"
-                  id="mobile"
-                  autoComplete="off"
-                  value={user.mobile}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="enter mobile number"
-                  required=""
-                  maxLength={10}
-                  pattern="^[^1-5][\d]{9}$"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="company"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Company Name
-                </label>
-                <input
-                  type="text"
-                  name="company"
-                  id="company"
-                  autoComplete="off"
-                  value={user.company}
-                  onChange={handleChange}
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  placeholder="enter company name"
-                  required=""
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="password"
-                  className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                >
-                  Password
-                </label>
-                <input
-                  type="password"
-                  name="password"
-                  id="password"
-                  autoComplete="off"
-                  value={user.password}
-                  onChange={handleChange}
-                  placeholder="••••••••"
-                  className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
-                  required=""
-                />
-              </div>
-              <div className="flex items-center justify-between"></div>
-              <button
-                onClick={handelSubmit}
-                className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-              >
+    <>
+      <section>
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 ">
+          <h1
+            href="#"
+            className="flex items-center mb-6 text-2xl font-bold text-amber-400"
+          >
+            Welcome to Platinum TechnoPark
+          </h1>
+          <div className="w-full md:mt-0 sm:max-w-md xl:p-0 bg-green-20">
+            <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
+              <h1 className="text-xl font-bold leading-tight tracking-tight  md:text-2xl ">
                 Sign up
-              </button>
-            </form>
+              </h1>
+              <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
+                <div>
+                  <label
+                    htmlFor="name"
+                    className="block mb-2 text-sm font-medium text-black tracking-wide font-sans"
+                  >
+                    Name
+                  </label>
+                  <input
+                    type="name"
+                    name="name"
+                    id="name"
+                    onChange={handleChange}
+                    value={values.name}
+                    onBlur={handleBlur}
+                    className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 dark:text-black dark:focus:ring-red-500 dark:focus:border-red-500"
+                    placeholder="name"
+                    required=""
+                    autoComplete="off"
+                  />
+                  {errors.name && touched.name ? (
+                    <span className="text-white font-semibold bg-red-500  font-sans">
+                      {errors.name}
+                    </span>
+                  ) : null}
+                </div>
+                <div>
+                  <label
+                    htmlFor="email"
+                    className="block mb-2 text-sm font-medium text-black tracking-wide font-sans"
+                  >
+                    Email address
+                  </label>
+                  <input
+                    type="email"
+                    name="email"
+                    id="email"
+                    onChange={handleChange}
+                    value={values.email}
+                    onBlur={handleBlur}
+                    className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 dark:text-black dark:focus:ring-red-500 dark:focus:border-red-500"
+                    placeholder="name@company.com"
+                    required=""
+                    autoComplete="off"
+                  />
+                  {errors.email && touched.email ? (
+                    <span className="text-white font-semibold bg-red-500  font-sans">
+                      {errors.email}
+                    </span>
+                  ) : null}
+                </div>
+                <div>
+                  <label
+                    htmlFor="password"
+                    className="block mb-2 text-sm font-medium text-black tracking-wide font-sans"
+                  >
+                    Password
+                  </label>
+                  <input
+                    type="password"
+                    name="password"
+                    id="password"
+                    onChange={handleChange}
+                    value={values.password}
+                    onBlur={handleBlur}
+                    placeholder="••••••••"
+                    className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 text-black dark:focus:ring-red-500 dark:focus:border-red-500"
+                    required=""
+                  />
+                  {errors.password && touched.password ? (
+                    <span className="font-semibold bg-red-500 font-sans mt-1">
+                      {errors.password}
+                    </span>
+                  ) : null}
+                </div>
+
+                <button
+                  type="submit"
+                  className="w-full font-bold tracking-normal text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
+                >
+                  Sign In
+                </button>
+                <p className="text-sm font-light">
+                  Already have an account?{" "}
+                  <Link
+                    href={"/"}
+                    className="font-medium text-primary-600 hover:underline dark:text-primary-500"
+                  >
+                    Sign In
+                  </Link>
+                </p>
+              </form>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
       <ToastContainer></ToastContainer>
-    </section>
+    </>
   );
 }

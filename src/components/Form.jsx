@@ -1,22 +1,61 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-export default function Form() {
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+export default async function Form() {
+  const router = useRouter();
   const initialValues = {
     email: "",
     password: "",
   };
 
-  const onSubmit = (values) => {
-    console.log(JSON.stringify(values));
-    toast.success("login sucess", {
-      position: toast.POSITION.TOP_CENTER,
-    });
+  const onSubmit = async (values) => {
+    const { email, password } = values;
+    try {
+      const res = await signIn("credentials", {
+        redirect: false,
+        email,
+        password,
+      });
+      if (res.error) {
+        toast.error(res.error, toast.POSITION.TOP_RIGHT);
+        return;
+      }
+      console.log(res);
+    } catch (error) {
+      console.log(error);
+    }
   };
+  // const onSubmit = async (values) => {
+  //   try {
+  //     const userData = JSON.stringify(values);
+  //     let response = await axios.post("/api/user/verify", userData, {
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //     });
+  //     let data = await response.data;
+  //     if (data.success) {
+  //       toast.success(data.message, {
+  //         position: toast.POSITION.TOP_CENTER,
+  //       });
+  //       router.push("/dashboard");
+  //     } else {
+  //       toast.error(data.message, {
+  //         position: toast.POSITION.TOP_CENTER,
+  //       });
+  //       initialValues;
+  //     }
+  //   } catch (error) {
+  //     toast.error(error, {
+  //       position: toast.POSITION.BOTTOM_RIGHT,
+  //     });
+  //   }
+  // };
   const validate = (values) => {
     let errors = {};
     if (!values.email) {
@@ -41,24 +80,17 @@ export default function Form() {
 
   return (
     <>
-      <section className="bg-gray-50 dark:bg-gray-900">
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto md:h-screen lg:py-0">
-          <Link
+      <section>
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 ">
+          <h1
             href="#"
-            className="flex items-center mb-6 text-2xl font-semibold text-gray-900 dark:text-white"
+            className="flex items-center mb-6 text-2xl font-bold text-amber-400"
           >
-            <Image
-              className="mr-2"
-              width={20}
-              height={20}
-              src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/logo.svg"
-              alt="logo"
-            />
-            Flowbite
-          </Link>
-          <div className="w-full bg-white rounded-lg shadow dark:border md:mt-0 sm:max-w-md xl:p-0 dark:bg-gray-800 dark:border-gray-700">
+            Welcome Back
+          </h1>
+          <div className="w-full md:mt-0 sm:max-w-md xl:p-0 bg-green-20">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight text-gray-900 md:text-2xl dark:text-white">
+              <h1 className="text-xl font-bold leading-tight tracking-tight  md:text-2xl ">
                 Sign in to your account
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
@@ -76,13 +108,13 @@ export default function Form() {
                     onChange={handleChange}
                     value={values.email}
                     onBlur={handleBlur}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 dark:text-black dark:focus:ring-red-500 dark:focus:border-red-500"
                     placeholder="name@company.com"
                     required=""
                     autoComplete="off"
                   />
                   {errors.email && touched.email ? (
-                    <span className="dark:text-red-500 text-sm font-normal font-sans">
+                    <span className="text-white font-semibold bg-red-500  font-sans">
                       {errors.email}
                     </span>
                   ) : null}
@@ -99,14 +131,14 @@ export default function Form() {
                     name="password"
                     id="password"
                     onChange={handleChange}
-                    value={values.paswsord}
+                    value={values.password}
                     onBlur={handleBlur}
                     placeholder="••••••••"
-                    className="bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 text-black dark:focus:ring-red-500 dark:focus:border-red-500"
                     required=""
                   />
                   {errors.password && touched.password ? (
-                    <span className=" dark:text-red-500 text-sm  font-sans font-normal">
+                    <span className="font-semibold bg-red-500 font-sans mt-1">
                       {errors.password}
                     </span>
                   ) : null}
@@ -133,18 +165,18 @@ export default function Form() {
                   </div>
                   <Link
                     href="#"
-                    className="text-sm font-medium text-blue-600 hover:underline dark:text-blue-500"
+                    className="text-sm font-medium text-black hover:underline"
                   >
                     Forgot password?
                   </Link>
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-blue-600 hover:bg-blue-700 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+                  className="w-full text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
                 >
                   Sign in
                 </button>
-                <p className="text-sm font-light text-gray-500 dark:text-gray-400">
+                <p className="text-sm font-light">
                   Don’t have an account yet?{" "}
                   <Link
                     href={"/signup"}

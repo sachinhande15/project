@@ -18,12 +18,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       require: [true, "please provide the password"],
     },
-    mobile: {
-      type: Number,
-      require: [true, "please provide the mobile"],
-      unique: true,
-    },
     company: {
+      type: String,
+      require: [true, "please provide the company name"],
+    },
+    vehicleNumber: {
       type: String,
       require: [true, "please provide the company name"],
     },

@@ -1,10 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-import {
-  getUserById,
-  updateUserById,
-  deleteUserById,
-} from "@/helperfunctions/dbmethods";
+import { NextResponse } from "next/server";
+import { getUserById, updateUserById, deleteUserById } from "@/Utils/dbmethods";
 
+/*
+ * This GET method is used to fetch data
+ * of particular user
+ *@param request
+ */
 export async function GET(req) {
   try {
     const url = await req.url;
@@ -15,13 +16,19 @@ export async function GET(req) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }
-export async function DELETE(req, res) {
+
+/*
+ * This DELETE method is used to Delete data
+ * of particular user
+ *@param request
+ */
+export async function DELETE(req) {
   try {
     const url = await req.url;
     const id = url.split("/users/")[1];
     await deleteUserById(id);
     return NextResponse.json(
-      { message: `user deleted sucessfully with Id ${id}` },
+      { message: `user deleted successfully with Id ${id}` },
       { status: 200 }
     );
   } catch (error) {
@@ -29,8 +36,12 @@ export async function DELETE(req, res) {
   }
 }
 
-// find by id and update user
-export async function PUT(req, res) {
+/*
+ * This PUT method is used to update data
+ * of particular user
+ *@param request
+ */
+export async function PUT(req) {
   try {
     const url = await req.url;
     const id = url.split("/users/")[1];

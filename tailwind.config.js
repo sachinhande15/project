@@ -6,11 +6,7 @@ module.exports = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
-    extend: {
-      backgroundImage: {
-        car: "url('/images/background.jpg')",
-      },
-    },
+    extend: {},
   },
   plugins: [],
 };
