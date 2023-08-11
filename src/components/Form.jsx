@@ -1,12 +1,14 @@
 "use client";
-import React from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-export default async function Form() {
+import Spinner from "./Spinner";
+export default function Form() {
+  const [loading, setLoading] = useState(false);
   const router = useRouter();
   const initialValues = {
     email: "",
@@ -14,6 +16,7 @@ export default async function Form() {
   };
 
   const onSubmit = async (values) => {
+    setLoading(true);
     const { email, password } = values;
     try {
       const res = await signIn("credentials", {
@@ -21,11 +24,12 @@ export default async function Form() {
         email,
         password,
       });
+      setLoading(false);
       if (res.error) {
         toast.error(res.error, toast.POSITION.TOP_RIGHT);
         return;
       }
-      console.log(res);
+      router.push("/dashboard");
     } catch (error) {
       console.log(error);
     }
@@ -97,9 +101,9 @@ export default async function Form() {
                 <div>
                   <label
                     htmlFor="email"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium text-gray-900"
                   >
-                    Your email
+                    Email Address
                   </label>
                   <input
                     type="email"
@@ -122,7 +126,7 @@ export default async function Form() {
                 <div>
                   <label
                     htmlFor="password"
-                    className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
+                    className="block mb-2 text-sm font-medium "
                   >
                     Password
                   </label>
@@ -143,26 +147,7 @@ export default async function Form() {
                     </span>
                   ) : null}
                 </div>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-start">
-                    <div className="flex items-center h-5">
-                      <input
-                        id="remember"
-                        aria-describedby="remember"
-                        type="checkbox"
-                        className="w-4 h-4 border border-gray-300 rounded bg-gray-50 focus:ring-3 focus:ring-primary-300 dark:bg-gray-700 dark:border-gray-600 dark:focus:ring-primary-600 dark:ring-offset-gray-800"
-                        required=""
-                      />
-                    </div>
-                    <div className="ml-3 text-sm">
-                      <label
-                        htmlFor="remember"
-                        className="text-gray-500 dark:text-gray-300"
-                      >
-                        Remember me
-                      </label>
-                    </div>
-                  </div>
+                <div className="flex justify-end">
                   <Link
                     href="#"
                     className="text-sm font-medium text-black hover:underline"
@@ -172,9 +157,20 @@ export default async function Form() {
                 </div>
                 <button
                   type="submit"
-                  className="w-full text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
+                  className=" flex justify-center place-items-end w-full text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
                 >
-                  Sign in
+                  <div className="">
+                    {loading ? (
+                      <>
+                        <Spinner></Spinner>
+                      </>
+                    ) : (
+                      <span className="text-center font-medium text-xl">
+                        {" "}
+                        Sign in
+                      </span>
+                    )}
+                  </div>
                 </button>
                 <p className="text-sm font-light">
                   Don’t have an account yet?{" "}
@@ -190,6 +186,7 @@ export default async function Form() {
           </div>
         </div>
       </section>
+
       <ToastContainer></ToastContainer>
     </>
   );

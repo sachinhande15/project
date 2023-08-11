@@ -15,6 +15,7 @@ export const authOptions = {
         const { email, password } = credentials;
         console.log(email, password);
         const user = await User.findOne({ email });
+        console.log(user);
         if (!user) {
           throw new Error("Invalid Email or Password");
         }
@@ -22,13 +23,26 @@ export const authOptions = {
         if (!isPasswordMatched) {
           throw new Error("Invalid Email or Password");
         }
+        console.log(user);
         return user;
       },
     }),
   ],
   pages: {
     signIn: "/login",
+    signOut: "/logout",
   },
+  callbacks: {
+    async jwt({ token, user, session }) {
+      console.log("jwt callback", { token, user, session });
+      return token;
+    },
+    async session({ session, token, user }) {
+      console.log("session callbacks", { session, token, user });
+      return session;
+    },
+  },
+
   secret: process.env.NEXTAUTH_SECERET,
 };
 

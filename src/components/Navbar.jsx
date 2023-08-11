@@ -1,12 +1,14 @@
 "use client";
 import Link from "next/link";
 import React from "react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 export default function Navbar() {
+  const { data, status } = useSession();
+  const handleLogout = () => {};
   return (
     <>
-      <header className="sticky md:h-14 m-2">
-        <div className="flex flex-col place-items-center justify-between md:max-h-80 md:max-w-screen-xl md:flex-row md:justify-self-auto">
+      <header className=" md:h-14 m-2 pl-2 bg-transparent shadow-xl shadow-green-400 ">
+        <div className="sticky flex flex-col place-items-center justify-between md:max-h-80 md:max-w-screen-xl md:flex-row md:justify-self-auto">
           <div className="text-center font-sans text-4xl font-bold tracking-wider">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -26,29 +28,35 @@ export default function Navbar() {
           </div>
           <div className="my-2 text-center">
             <ul className="flex flex-col justify-between gap-2 font-sans font-semibold md:flex-row">
-              <li className="m-1 text-justify hover:cursor-pointer">
-                <button
-                  onClick={() => signOut()}
-                  className="text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300"
-                >
-                  Sign Out
-                </button>
-              </li>
-
-              <li className="m-1 text-justify hover:cursor-pointer">
-                <Link href={"/signup"}>
-                  <button className="text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300">
-                    Signup
-                  </button>
-                </Link>
-              </li>
-              <li className="m-1 text-justify hover:cursor-pointer">
-                <Link href={"/login"}>
-                  <button className="text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300">
-                    Login
-                  </button>
-                </Link>
-              </li>
+              {status == "authenticated" && data !== null ? (
+                <>
+                  <li className="m-1 text-justify hover:cursor-pointer">
+                    <button
+                      onClick={() => signOut()}
+                      className=" cursor-pointer text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300"
+                    >
+                      Sign Out
+                    </button>
+                  </li>
+                </>
+              ) : (
+                <>
+                  <li className="m-1 text-justify hover:cursor-pointer">
+                    <Link href={"/signup"}>
+                      <button className="text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300">
+                        Signup
+                      </button>
+                    </Link>
+                  </li>
+                  <li className="m-1 text-justify hover:cursor-pointer">
+                    <Link href={"/login"}>
+                      <button className="text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300">
+                        Login
+                      </button>
+                    </Link>
+                  </li>
+                </>
+              )}
             </ul>
           </div>
         </div>

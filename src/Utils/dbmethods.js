@@ -16,7 +16,7 @@ const createEncryptedPassword = async (password) => {
  *@param reqBody
  * This method is used save user
  */
-export async function registerUser(email, password, username) {
+export async function registerUser(email, password, name) {
   try {
     connectDB(process.env.MONGO_URI);
     const userFound = await User.findOne({ email: email });
@@ -33,7 +33,7 @@ export async function registerUser(email, password, username) {
     const encryptedPassword = await createEncryptedPassword(password);
     const registerUser = new User({
       email,
-      username,
+      name,
       password: encryptedPassword,
     });
     const userRegister = await User.create(registerUser);

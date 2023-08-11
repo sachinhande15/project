@@ -3,7 +3,7 @@ import connectDB from "@/dbconnet/connection";
 import User from "@/model/user";
 
 /*
- * This method is used to search user by using vehicle number.
+ * This method is used to find vehicle owner details.
  */
 export async function POST(req) {
   try {
@@ -17,20 +17,24 @@ export async function POST(req) {
       );
     }
     console.log(reqBody);
-    const user = await User.findOne(reqBody);
-    if (!user)
+    const user = await User.findOne(reqBody).select("-password");
+
+    if (!user) {
       return NextResponse.json(
         { message: "No records found", success: false },
-        { status: 200 }
+        { status: 404 }
       );
+    }
+
     console.log(user);
     let data = {
       name: user.name,
       vehicleNumber: user.vehicleNumber,
     };
+    console.log(data);
     return NextResponse.json(
-      data,
-      { message: "user found ", success: true },
+      user,
+      { message: "details found ", success: true },
       { status: 200 }
     );
   } catch (error) {

@@ -6,7 +6,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import axios from "axios";
 import { useRouter } from "next/navigation";
-export default async function Form() {
+export default function Form() {
   const router = useRouter();
   const initialValues = {
     name: "",
@@ -17,7 +17,7 @@ export default async function Form() {
   /*
    * User registration
    */
-  const onSubmit = async (values) => {
+  const onSubmit = async (values, { resetForm }) => {
     try {
       const userData = JSON.stringify(values);
       let response = await axios.post("/api/user/registration", userData, {
@@ -35,6 +35,7 @@ export default async function Form() {
           router.push("/login");
         }, 3000);
       }
+      resetForm();
     } catch (error) {
       toast.error(error, {
         position: toast.POSITION.TOP_RIGHT,
@@ -71,16 +72,10 @@ export default async function Form() {
   return (
     <>
       <section>
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 ">
-          <h1
-            href="#"
-            className="flex items-center mb-6 text-2xl font-bold text-amber-400"
-          >
-            Welcome to Platinum TechnoPark
-          </h1>
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 bg-gradient-to-r from-blue-200 to-cyan-200">
           <div className="w-full md:mt-0 sm:max-w-md xl:p-0 bg-green-20">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
-              <h1 className="text-xl font-bold leading-tight tracking-tight  md:text-2xl ">
+              <h1 className="text-xl font-bold leading-tight tracking-tight text-center md:text-2xl ">
                 Sign up
               </h1>
               <form className="space-y-4 md:space-y-6" onSubmit={handleSubmit}>
@@ -99,7 +94,7 @@ export default async function Form() {
                     value={values.name}
                     onBlur={handleBlur}
                     className="border border-red-300 sm:text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:placeholder-gray-400 dark:text-black dark:focus:ring-red-500 dark:focus:border-red-500"
-                    placeholder="name"
+                    placeholder="Enter your name"
                     required=""
                     autoComplete="off"
                   />
@@ -161,14 +156,14 @@ export default async function Form() {
 
                 <button
                   type="submit"
-                  className="w-full font-bold tracking-normal text-white bg-sky-600 hover:bg-sky-700 focus:ring-4 focus:outline-none focus:ring-sky-300 rounded-lg text-sm px-5 py-2.5 text-center dark:bg-sky-600 dark:hover:bg-sky-700 dark:focus:ring-sky-800"
+                  className="w-full font-bold tracking-normal text-white bg-green-600 hover:bg-green-700 focus:ring-4 focus:outline-none focus:ring-green-300 rounded-lg text-sm px-5 py-2.5 text-center dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
                 >
                   Sign In
                 </button>
                 <p className="text-sm font-light">
                   Already have an account?{" "}
                   <Link
-                    href={"/"}
+                    href={"/login"}
                     className="font-medium text-primary-600 hover:underline dark:text-primary-500"
                   >
                     Sign In

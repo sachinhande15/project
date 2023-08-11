@@ -8,7 +8,7 @@ export async function POST(req) {
       { message: "you must provide data" },
       { status: 400 }
     );
-  const { email, password, username } = reqBody;
-  const response = await registerUser(email, password, username);
+  const { email, password, name } = reqBody;
+  const response = await registerUser(email, password, name);
   return response;
 }
