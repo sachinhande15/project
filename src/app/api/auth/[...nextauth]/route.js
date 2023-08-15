@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import GoogleProvider from "next-auth/providers/google";
 import User from "@/model/user";
 import connectDB from "@/dbconnet/connection";
 import bcrypt from "bcryptjs";
@@ -23,9 +24,17 @@ export const authOptions = {
         if (!isPasswordMatched) {
           throw new Error("Invalid Email or Password");
         }
-        console.log(user);
-        return user;
+        console.log(user.email);
+        return {
+          email: user.email,
+          id: user._id,
+          name: user.name,
+        };
       },
+    }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_ID,
+      clientSecret: process.env.GOOGLE_SECERET,
     }),
   ],
   pages: {

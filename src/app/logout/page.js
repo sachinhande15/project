@@ -1,9 +1,7 @@
 "use client";
 import React from "react";
 import Link from "next/link";
-import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { signOut } from "next-auth/react";
+
 import axios from "axios";
 // export const metadata = {
 //   title: "logout",
@@ -16,9 +14,6 @@ export default function page() {
   //     toast.success(data.message, toast.POSITION.TOP_CENTER);
   //   }
   // };
-  useEffect(() => {
-    // signOut();
-  }, []);
 
   return (
     <>

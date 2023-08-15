@@ -8,8 +8,8 @@ export default function AddVehicle() {
     vehicleNumber: "",
     company: "",
   };
-  const onSubmit = async (e, values, { resetForm }) => {
-    e.preventDefault();
+  const onSubmit = async (values, { resetForm }) => {
+    console.log(values);
     toast.success("detail added successfully");
     resetForm();
   };

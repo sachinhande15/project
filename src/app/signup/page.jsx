@@ -72,7 +72,7 @@ export default function Form() {
   return (
     <>
       <section>
-        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 bg-gradient-to-r from-blue-200 to-cyan-200">
+        <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 ">
           <div className="w-full md:mt-0 sm:max-w-md xl:p-0 bg-green-20">
             <div className="p-6 space-y-4 md:space-y-6 sm:p-8">
               <h1 className="text-xl font-bold leading-tight tracking-tight text-center md:text-2xl ">
@@ -99,7 +99,7 @@ export default function Form() {
                     autoComplete="off"
                   />
                   {errors.name && touched.name ? (
-                    <span className="text-white font-semibold bg-red-500  font-sans">
+                    <span className="text-red-500 font-normal font-sans">
                       {errors.name}
                     </span>
                   ) : null}
@@ -124,7 +124,7 @@ export default function Form() {
                     autoComplete="off"
                   />
                   {errors.email && touched.email ? (
-                    <span className="text-white font-semibold bg-red-500  font-sans">
+                    <span className="text-red-500 font-normal font-sans">
                       {errors.email}
                     </span>
                   ) : null}
@@ -148,7 +148,7 @@ export default function Form() {
                     required=""
                   />
                   {errors.password && touched.password ? (
-                    <span className="font-semibold bg-red-500 font-sans mt-1">
+                    <span className="font-normal text-red-500 font-sans mt-1">
                       {errors.password}
                     </span>
                   ) : null}

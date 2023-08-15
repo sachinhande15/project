@@ -7,7 +7,7 @@ import { AuthProvider } from "./Provider";
 export const metadata = {
   title: {
     default: "Platinum TechnoPark",
-    template: "%s",
+    template: "Platinum TechnoPark|%s",
   },
 };
 

@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { useFormik } from "formik";
 import { ToastContainer, toast } from "react-toastify";
@@ -7,14 +8,19 @@ import "react-toastify/dist/ReactToastify.css";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 import Spinner from "./Spinner";
+
 export default function Form() {
+  //Loading state
   const [loading, setLoading] = useState(false);
+  // router to direct request
   const router = useRouter();
   const initialValues = {
     email: "",
     password: "",
   };
-
+  /*
+   * This method is used to submit the user cred
+   */
   const onSubmit = async (values) => {
     setLoading(true);
     const { email, password } = values;
@@ -34,32 +40,9 @@ export default function Form() {
       console.log(error);
     }
   };
-  // const onSubmit = async (values) => {
-  //   try {
-  //     const userData = JSON.stringify(values);
-  //     let response = await axios.post("/api/user/verify", userData, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     let data = await response.data;
-  //     if (data.success) {
-  //       toast.success(data.message, {
-  //         position: toast.POSITION.TOP_CENTER,
-  //       });
-  //       router.push("/dashboard");
-  //     } else {
-  //       toast.error(data.message, {
-  //         position: toast.POSITION.TOP_CENTER,
-  //       });
-  //       initialValues;
-  //     }
-  //   } catch (error) {
-  //     toast.error(error, {
-  //       position: toast.POSITION.BOTTOM_RIGHT,
-  //     });
-  //   }
-  // };
+  /*
+   * This method is used to validate the all fields of the login from
+   */
   const validate = (values) => {
     let errors = {};
     if (!values.email) {
@@ -86,10 +69,7 @@ export default function Form() {
     <>
       <section>
         <div className="flex flex-col items-center justify-center px-6 py-8 mx-auto h-screen md:h-screen lg:py-0 ">
-          <h1
-            href="#"
-            className="flex items-center mb-6 text-2xl font-bold text-amber-400"
-          >
+          <h1 href="#" className="flex items-center mb-6 text-2xl font-bold">
             Welcome Back
           </h1>
           <div className="w-full md:mt-0 sm:max-w-md xl:p-0 bg-green-20">
@@ -183,6 +163,22 @@ export default function Form() {
                 </p>
               </form>
             </div>
+          </div>
+          <h4 className="text-xl">Or</h4>
+          <div className="w-[300px] flex justify-evenly border rounded-lg mt-4 p-4">
+            <Image
+              className=""
+              src={"/images/google.png"}
+              alt="logo"
+              height={25}
+              width={25}
+            ></Image>
+            <button
+              onClick={() => signIn("google")}
+              className="text-center tracking-wide"
+            >
+              Sign in With Google
+            </button>
           </div>
         </div>
       </section>

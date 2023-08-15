@@ -13,26 +13,32 @@ export default function SearchBar() {
     vehicleNumber: "",
   };
   const onSubmit = async (values, { resetForm }) => {
-    let vehicleNumber = JSON.stringify(values);
-    const res = await axios.post("/api/users/searchVehicle", vehicleNumber, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    if (res.status == 200) {
+    try {
+      let vehicleNumber = JSON.stringify(values);
+      const res = await axios.post("/api/users/searchVehicle", vehicleNumber, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(res);
       const data = await res.data;
-      toast.success("success", {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      setResult(data);
-    } else {
-      toast.error(res.message, {
-        position: toast.POSITION.TOP_RIGHT,
-      });
-      return;
+      console.log(data);
+      if (data.success) {
+        toast.success("Details Found", {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        setResult(data.user);
+      } else {
+        toast.error(data.message, {
+          position: toast.POSITION.TOP_RIGHT,
+        });
+        return;
+      }
+      console.log(result);
+      resetForm();
+    } catch (error) {
+      console.log(error);
     }
-    console.log(result);
-    resetForm();
   };
   const validation = Yup.object().shape({
     vehicleNumber: Yup.string()
@@ -40,42 +46,6 @@ export default function SearchBar() {
       .max(10, "Too long")
       .required("Please enter a vehicle number"),
   });
-
-  // const searchVehicle = async (e, values) => {
-  //   try {
-  //     e.preventDefault();
-  //     let vehicleNumber = JSON.stringify(values);
-  //     if (!vehicleNumber) {
-  //       toast.error("please enter vehicle number", {
-  //         position: toast.POSITION.BOTTOM_RIGHT,
-  //       });
-  //       return;
-  //     }
-  //     const res = await axios.post("/api/users/searchVehicle", vehicleNumber, {
-  //       headers: {
-  //         "Content-Type": "application/json",
-  //       },
-  //     });
-  //     if (res.status == 200) {
-  //       const data = await res.data;
-  //       console.log(data);
-  //       toast.success("details found", {
-  //         position: toast.POSITION.TOP_RIGHT,
-  //       });
-  //       setResult(data);
-  //     } else {
-  //       toast.error("something went wrong", {
-  //         position: toast.POSITION.TOP_RIGHT,
-  //       });
-  //       return;
-  //     }
-  //   } catch (error) {
-  //     toast.error(error, {
-  //       position: toast.POSITION.TOP_RIGHT,
-  //     });
-  //   }
-  //   console.log(result);
-  // };
 
   return (
     <Formik
@@ -94,6 +64,7 @@ export default function SearchBar() {
         } = props;
         return (
           <div className="flex flex-col justify-start md:justify-center items-center w-screen bg-gradient-to-r  h-screen p-2 m-2">
+            <h1 className="text-4xl font-sans font-semibold mb-2">Welcome</h1>
             <form
               onSubmit={handleSubmit}
               className="bg-white  m-4 md:w-1/2 flex items-center border rounded-[60px] pt-[10px] pb-[10px] pl-[20px] pr-[20px]"

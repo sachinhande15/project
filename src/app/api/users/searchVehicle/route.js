@@ -20,21 +20,11 @@ export async function POST(req) {
     const user = await User.findOne(reqBody).select("-password");
 
     if (!user) {
-      return NextResponse.json(
-        { message: "No records found", success: false },
-        { status: 404 }
-      );
+      return NextResponse.json({ message: "No records found", success: false });
     }
-
     console.log(user);
-    let data = {
-      name: user.name,
-      vehicleNumber: user.vehicleNumber,
-    };
-    console.log(data);
     return NextResponse.json(
-      user,
-      { message: "details found ", success: true },
+      { message: "details found ", user, success: true },
       { status: 200 }
     );
   } catch (error) {

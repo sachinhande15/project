@@ -1,13 +1,18 @@
 "use client";
 import Link from "next/link";
 import React from "react";
+import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 export default function Navbar() {
+  const router = useRouter();
   const { data, status } = useSession();
-  const handleLogout = () => {};
+  const handleLogout = () => {
+    signOut();
+    router.push("/login");
+  };
   return (
     <>
-      <header className=" md:h-14 m-2 pl-2 bg-transparent shadow-xl shadow-green-400 ">
+      <header className=" md:h-14 m-2 pl-2 bg-transparent shadow-xl">
         <div className="sticky flex flex-col place-items-center justify-between md:max-h-80 md:max-w-screen-xl md:flex-row md:justify-self-auto">
           <div className="text-center font-sans text-4xl font-bold tracking-wider">
             <svg
@@ -32,7 +37,7 @@ export default function Navbar() {
                 <>
                   <li className="m-1 text-justify hover:cursor-pointer">
                     <button
-                      onClick={() => signOut()}
+                      onClick={handleLogout}
                       className=" cursor-pointer text w-[100px] rounded-md border bg-slate-200 p-1 tracking-normal hover:cursor-pointer hover:bg-green-300"
                     >
                       Sign Out
