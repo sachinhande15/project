@@ -25,16 +25,21 @@ export default function Form() {
           "Content-Type": "application/json",
         },
       });
-      if (response.status == 201) {
-        let data = await response.data;
-        console.log(data);
-        toast.success(data.message, {
+      console.log(response);
+      let data = await response.data;
+      console.log(data);
+      if (!data.success) {
+        toast.error(data.message, {
           position: toast.POSITION.TOP_CENTER,
         });
-        setInterval(() => {
-          router.push("/login");
-        }, 3000);
+        return;
       }
+      toast.success(data.message, {
+        position: toast.POSITION.TOP_CENTER,
+      });
+      setInterval(() => {
+        router.push("/login");
+      }, 5000);
       resetForm();
     } catch (error) {
       toast.error(error, {

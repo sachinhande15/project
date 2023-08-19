@@ -69,14 +69,15 @@ const createEncryptedPassword = async (password) => {
  *@param reqBody
  * This method is register user
  */
-export async function registerUser(email, password, name) {
+export async function registerUser({ email, name, password }) {
   try {
-    const userFound = await User.findUser(email);
+    const userFound = await findUser({ email });
     if (userFound) {
       return NextResponse.json(
         {
-          message: "you are already registered please login",
+          message: "Email is already exist",
         },
+
         {
           status: 200,
         }
@@ -92,7 +93,7 @@ export async function registerUser(email, password, name) {
     // const registeredUser = await registerUser.cre();
     console.log(userRegister);
     return NextResponse.json(
-      { message: "Registration successful." },
+      { message: "Registration successful.", success: true },
       { status: 201 }
     );
   } catch (error) {
