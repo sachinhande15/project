@@ -1,13 +1,11 @@
 import { NextResponse } from "next/server";
-import connectDB from "@/dbconnet/connection";
-import User from "@/model/user";
+import { findUser } from "@/Services/UserServices";
 
 /*
  * This method is used to find vehicle owner details.
  */
 export async function POST(req) {
   try {
-    connectDB(process.env.MONGO_URI);
     const reqBody = await req.json();
     console.log(reqBody);
     if (!reqBody) {
@@ -16,13 +14,10 @@ export async function POST(req) {
         { status: 400 }
       );
     }
-    console.log(reqBody);
-    const user = await User.findOne(reqBody).select("-password");
-
+    const user = await findUser(reqBody);
     if (!user) {
       return NextResponse.json({ message: "No records found", success: false });
     }
-    console.log(user);
     return NextResponse.json(
       { message: "details found ", user, success: true },
       { status: 200 }

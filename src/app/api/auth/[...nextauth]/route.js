@@ -1,9 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import GoogleProvider from "next-auth/providers/google";
-import User from "@/model/user";
-import connectDB from "@/dbconnet/connection";
 import bcrypt from "bcryptjs";
+import { findUser } from "@/Services/UserServices";
 
 export const authOptions = {
   session: {
@@ -11,24 +10,24 @@ export const authOptions = {
   },
   providers: [
     CredentialsProvider({
-      async authorize(credentials, req) {
-        connectDB(process.env.MONGO_URI);
+      async authorize(credentials) {
         const { email, password } = credentials;
-        console.log(email, password);
-        const user = await User.findOne({ email });
-        console.log(user);
-        if (!user) {
-          throw new Error("Invalid Email or Password");
+        const userExist = await findUser({ email });
+        if (!userExist) {
+          throw new Error("Incorrect Email or Password");
         }
-        const isPasswordMatched = await bcrypt.compare(password, user.password);
+        const isPasswordMatched = await bcrypt.compare(
+          password,
+          userExist.password
+        );
         if (!isPasswordMatched) {
-          throw new Error("Invalid Email or Password");
+          throw new Error("Incorrect Password");
         }
-        console.log(user.email);
+        console.log(userExist.email);
         return {
-          email: user.email,
-          id: user._id,
-          name: user.name,
+          email: userExist.email,
+          id: userExist._id,
+          name: userExist.name,
         };
       },
     }),
@@ -42,16 +41,36 @@ export const authOptions = {
     signOut: "/logout",
   },
   callbacks: {
-    async jwt({ token, user, session }) {
-      console.log("jwt callback", { token, user, session });
+    async jwt({ token, user }) {
+      //console.log("jwt callback", { token });
+      let email = token.email;
+      user = await findUser({ email });
+      token = { ...token, name: user.name };
       return token;
     },
     async session({ session, token, user }) {
-      console.log("session callbacks", { session, token, user });
+      //console.log("session callbacks", { session, token });
+      session = { ...session, id: token.id };
+      console.log(session);
       return session;
     },
+    // async signIn({ profile }) {
+    //   try {
+    //     const userExist = await findUserByEmail(profile?.email);
+    //     if (!userExist) {
+    //       const newUser = new User({
+    //         name: profile.name,
+    //         email,
+    //       });
+    //       await User.create(newUser);
+    //       return true;
+    //     }
+    //   } catch (error) {
+    //     console.log(error);
+    //     return false;
+    //   }
+    // },
   },
-
   secret: process.env.NEXTAUTH_SECERET,
 };
 

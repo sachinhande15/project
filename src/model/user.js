@@ -8,11 +8,7 @@ const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       require: [true, "please provide the email id"],
-      unique: true,
-    },
-    username: {
-      type: String,
-      require: [true, "please provide the username"],
+      unique: [true, "Email address is already exist"],
     },
     password: {
       type: String,
@@ -20,11 +16,15 @@ const UserSchema = new mongoose.Schema(
     },
     company: {
       type: String,
-      require: [true, "please provide the company name"],
     },
     vehicleNumber: {
       type: String,
-      require: [true, "please provide the company name"],
+    },
+    mobile: {
+      type: String,
+    },
+    profile: {
+      type: String,
     },
   },
   { timestamps: true }
